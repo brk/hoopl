@@ -149,12 +149,12 @@ class Uniques u where
 freshUniqueGraph :: UniqueMonad m => (Unique -> AGraph n e x) -> m (Graph n e x)
 freshUniqueGraph f = do
   u <- freshUnique
-  return $ graphOfAGraph (f u)
+  graphOfAGraph (f u)
 
-freshLabelGraph :: UniqueMonad m => (Unique -> AGraph n e x) -> m (Graph n e x)
+freshLabelGraph :: UniqueMonad m => (Label -> AGraph n e x) -> m (Graph n e x)
 freshLabelGraph f = do
   u <- freshUnique
-  return $ graphOfAGraph (f $ uniqueToLbl u)
+  graphOfAGraph (f $ uniqueToLbl u)
 
 instance Uniques Unique where
   withFresh f = A $ freshUniqueGraph f 
