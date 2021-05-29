@@ -146,11 +146,21 @@ aGraphOfGraph g = A (return g)
 class Uniques u where
   withFresh :: (u -> AGraph n e x) -> AGraph n e x
 
+freshUniqueGraph :: UniqueMonad m => (Unique -> AGraph n e x) -> m (Graph n e x)
+freshUniqueGraph f = do
+  u <- freshUnique
+  return $ graphOfAGraph (f u)
+
+freshLabelGraph :: UniqueMonad m => (Unique -> AGraph n e x) -> m (Graph n e x)
+freshLabelGraph f = do
+  u <- freshUnique
+  return $ graphOfAGraph (f $ uniqueToLbl u)
+
 instance Uniques Unique where
-  withFresh f = A $ freshUnique >>= (graphOfAGraph . f)
+  withFresh f = A $ freshUniqueGraph f 
 
 instance Uniques Label where
-  withFresh f = A $ freshUnique >>= (graphOfAGraph . f . uniqueToLbl)
+  withFresh f = A $ freshLabelGraph f 
 
 -- | Lifts binary 'Graph' functions into 'AGraph' functions.
 liftA2 :: (Graph  n a b -> Graph  n c d -> Graph  n e f)
